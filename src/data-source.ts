@@ -7,12 +7,9 @@ dotenv.config();
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.DB_HOST,
-  port: parseInt(process.env.DB_PORT || '5432', 10), // safer & avoids TS warning
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-  entities: [__dirname + '/**/*.entity{.ts,.js}'],
+  url: process.env.DATABASE_URL, // 👈 use Neon connection string
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false, // 👈 SSL for Neon
+  entities: [__dirname + '/*/.entity{.ts,.js}'],
   migrations: [__dirname + '/migrations/*{.ts,.js}'],
   synchronize: false,
 });

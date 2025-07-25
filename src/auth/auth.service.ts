@@ -42,21 +42,14 @@ export class AuthService {
     // Set tokens in cookies
     res.cookie('jwt', token, {
       httpOnly: true,
-      secure: false,
-
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      domain: process.env.COOKIE_DOMAIN || 'localhost',
-      path: '/',
       maxAge: 15 * 60 * 1000, // 15 min access token
     });
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: false,
-
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-
-      domain: process.env.COOKIE_DOMAIN || 'localhost',
-      path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -81,17 +74,13 @@ export class AuthService {
     const token = this.jwtService.sign(payload);
     res.cookie('jwt', token, {
       httpOnly: true,
-      secure: false,
-      domain: process.env.COOKIE_DOMAIN || 'localhost',
-      path: '/',
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 15 * 60 * 1000,
     });
     res.cookie('refreshToken', newRefreshToken, {
       httpOnly: true,
-      secure: false,
-      domain: process.env.COOKIE_DOMAIN || 'localhost',
-      path: '/',
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });

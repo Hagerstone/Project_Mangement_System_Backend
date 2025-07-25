@@ -33,11 +33,10 @@ async function bootstrap() {
 
   // ✅ CORS config for frontend access
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: process.env.NODE_ENV === 'production' 
+    ? 'https://project-management-system-frontend-eight.vercel.app' 
+    : 'http://localhost:5173',
     credentials: true, // ✅ Allow cookies and headers
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-
-    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   const port = process.env.PORT || 3000;

@@ -22,7 +22,22 @@ import { AuditModule } from './audit/audit.module';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (cs: ConfigService) => ({
+      useFactory: (cs: ConfigService) => {
+
+        if (process.env.NODE_ENV === 'production'){
+          return {
+            type: 'postgres',
+            url: cs.get('DATABASE_URL'),
+            ssl: {
+              rejectUnauthorized: false,
+            },
+            entities: [__dirname + '/**/*.entity{.ts,.js}'],
+            migrations: [__dirname + '/../migrations/*{.ts,.js}'],
+            synchronize: false,
+          };
+        }
+      
+      return {
         type: 'postgres',
         host: cs.get('DB_HOST'),
         port: +cs.get('DB_PORT'),
@@ -32,9 +47,10 @@ import { AuditModule } from './audit/audit.module';
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         migrations: [__dirname + '/../migrations/*{.ts,.js}'],
         synchronize: false,  // use migrations!
-      }),
-      inject: [ConfigService],
-    }),
+      };
+    },
+    inject: [ConfigService],
+  }),
     AuthModule,
     UsersModule,
     TeamsModule,
