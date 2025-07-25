@@ -1,19 +1,19 @@
+# backend/Dockerfile
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Install dependencies
 COPY package*.json ./
-RUN npm install
+RUN npm ci --omit=dev
 
-# Copy everything (so dist doesn't get skipped by mistake)
-COPY . .
+# Copy only source files and build output for smaller image and correct context
+COPY . ./
 
-# Build the NestJS app
+# Build the project
 RUN npm run build
 
-# Expose port for Render
 EXPOSE 3000
 
-# Start the app (entry point must match dist/main)
-CMD ["node", "dist/main"]
+# Start the app in production mode
+CMD ["node", "dist/main.js"]
+
