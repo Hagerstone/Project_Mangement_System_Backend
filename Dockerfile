@@ -1,23 +1,19 @@
-# ----------- Stage 1: Build -----------
-FROM node:20-alpine AS builder
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-RUN npm run build
-
-
-# ----------- Stage 2: Run -----------
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy only the built app and runtime deps
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package*.json ./
-RUN npm install --omit=dev
+# Install dependencies
+COPY package*.json ./
+RUN npm install
 
+# Copy everything (so dist doesn't get skipped by mistake)
+COPY . .
+
+# Build the NestJS app
+RUN npm run build
+
+# Expose port for Render
 EXPOSE 3000
+
+# Start the app (entry point must match dist/main)
 CMD ["node", "dist/main"]
